@@ -11,47 +11,46 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    name= Column(String(100), nullable=False)
-    email= Column(String(150), unique=True, nullable=False)
-    favorites= relationship("Favorites", back_populates="parent")
+    user_name = Column(String(100), nullable=False, unique=True)
+    full_name= Column(String(150), nullable=False)
+    password= Column(String(15), nullable=False)
+    user_email = Column(String(50), nullable=False, unique=True)
+    number_of_posts = Column(Integer, default=0)
+    followers = Column(Integer, default = 0)
+    following = Column(Integer, default=0)
+    post= relationship("Post", back_populates="parent")
 
-class Favorites(Base):
-    __tablename__ = 'favorites'
+class Posts(Base):
+    __tablename__ = 'posts'
     id= Column(Integer, primary_key=True)
-    element_name= Column(String(20), nullable=False)
-    total= Column(Integer, default=0)
+    caption= Column(String(1000), nullable=True)
+    comments= Column(String(1000), nullable = True)
+    likes = Column(Integer, default =0)
     user_id= Column(Integer, ForeignKey("user.id"))
     user= relationship("User", back_populates="children")
+    pictures= relationship("Pictures", back_populates="parent")
+    reels= relationship("Reels", back_populates="parent")
+    ig_tv= relationship("IGTV", back_populates="parent")
 
-class Elements(Base):
-    __tablename__ = 'elements'
+class Pictures(Base):
+    __tablename__ = 'pictures'
     id= Column(Integer, primary_key=True)
-    url= Column(String(200), nullable=False)
-    name= Column(String(200), nullable=False)
-    favorites= Column(Integer, ForeignKey("favorites.id"))
-    planets= relationship("Planets", back_populates="parent")
-    vehicles= relationship("Vehicles", back_populates="parent")
-    cheracters= relationship("Characters", back_populates="parent")
+    tags= Column(Integer, nullable=False)
+    location = Column(String(200), nullable=True, unique=False)
+    posts_id= Column(Integer, ForeignKey("posts.id"))
+    
+class Reels(Base):
+    __tablename__= 'reels'
+    id= Column(Integer, primary_key=True)
+    views= Column(Integer, default=0)
+    audio = Column(String(200), nullable=True)
+    element_id= Column(Integer, ForeignKey("posts.id"))
 
-class Planets(Base):
-    __tablename__= 'planets'
+class IGTV(Base):
+    __tablename__= 'igtv'
     id= Column(Integer, primary_key=True)
-    population= Column(Integer, nullable=False)
-    element_id= Column(Integer, ForeignKey("elements.id"))
-
-class Vehicles(Base):
-    __tablename__= 'vehicles'
-    id= Column(Integer, primary_key=True)
-    model= Column(String(100), nullable=False)
-    manufacturer= Column(String(100), nullable=False)
-    element_id= Column(Integer, ForeignKey("elements.id"))
-
-class Characters(Base):
-    __tablename__= 'characters'
-    id= Column(Integer, primary_key=True)
-    description= Column(String(200), nullable=False)
-    gender= Column(String(20))
-    element_id= Column(Integer, ForeignKey("elements.id"))
+    views= Column(Integer, default=0)
+    element_id= Column(Integer, ForeignKey("posts.id"))
 
     def to_dict(self):
         return {}
